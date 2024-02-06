@@ -1,16 +1,9 @@
 require('dotenv').config();
-import express from 'express';
+import express, {Request, Response} from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import {ApolloServer} from '@apollo/server';
-import {expressMiddleware} from '@apollo/server/express4';
-import typeDefs from './api/schemas/index';
-import resolvers from './api/resolvers/index';
-import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
-} from '@apollo/server/plugin/landingPage/default';
 import {notFound, errorHandler} from './middlewares';
+import {MessageResponse} from './types/MessageTypes'
 
 const app = express();
 
@@ -20,34 +13,18 @@ const app = express();
       helmet({
         crossOriginEmbedderPolicy: false,
         contentSecurityPolicy: false,
-      })
+      }),
     );
-    const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      plugins: [
-        process.env.ENVIRONMENT === 'production'
-          ? ApolloServerPluginLandingPageProductionDefault({
-              graphRef: 'my-graph-id@my-graph-variant',
-              footer: false,
-            })
-          : ApolloServerPluginLandingPageLocalDefault({footer: false}),
-      ],
-      includeStacktraceInErrorResponses: false,
-    });
-    await server.start();
+    app.use(cors());
 
-    app.use(
-      '/graphql',
-      cors<cors.CorsRequest>(),
-      express.json(),
-      expressMiddleware(server)
-    );
+    app.get('/', (_req: Request, res: Response<MessageResponse>) => {
+      res.send({message: 'Server is running'});
+    });
 
     app.use(notFound);
     app.use(errorHandler);
   } catch (error) {
-    console.log(error);
+    console.error((error as Error).message);
   }
 })();
 

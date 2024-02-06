@@ -1,12 +1,12 @@
+// TODO: Schema for animal model
 import mongoose from 'mongoose';
-import {Animal} from '../../interfaces/Animal';
-// based on iterface Animal located in src/interfaces/Animal.ts
+import {Animal} from '../../types/DBTypes';
 
 const animalSchema = new mongoose.Schema<Animal>({
   animal_name: {
     type: String,
     required: true,
-    minlength: 2,
+    unique: true,
   },
   species: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,7 +16,15 @@ const animalSchema = new mongoose.Schema<Animal>({
   birthdate: {
     type: Date,
     required: true,
+    max: Date.now(),
+  },
+  gender: {
+    type: String,
+    enum: ['Male', 'Female'],
+    required: true,
   },
 });
 
-export default mongoose.model<Animal>('Animal', animalSchema);
+const AnimalModel = mongoose.model<Animal>('Animal', animalSchema);
+
+export default AnimalModel;

@@ -1,13 +1,12 @@
+// TODO: Schema for species model
 import mongoose from 'mongoose';
-import {Species} from '../../interfaces/Species';
-// based on iterface Species located in src/interfaces/Species.ts
+import {Species} from '../../types/DBTypes';
 
 const speciesSchema = new mongoose.Schema<Species>({
   species_name: {
     type: String,
     required: true,
     unique: true,
-    minlength: 2,
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -31,4 +30,6 @@ const speciesSchema = new mongoose.Schema<Species>({
   },
 });
 
-export default mongoose.model<Species>('Species', speciesSchema);
+const SpeciesModel = mongoose.model<Species>('Species', speciesSchema);
+
+export default SpeciesModel;
