@@ -1,61 +1,42 @@
 import {Point} from 'geojson';
-import {Document, Types} from 'mongoose';
+import mongoose, {Document} from 'mongoose';
 
 type Category = {
-  _id: Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   category_name: string;
 };
 
-type Animal = {
-  _id: Types.ObjectId;
-  animal_name: string;
-  species: Types.ObjectId;
-  birthdate: Date;
-  gender: 'Male' | 'Female';
-  owner: Types.ObjectId | User;
-};
-
-type FullAnimal = Omit<Animal, 'species'> & {
-  species: FullSpecies;
-};
-
-type Species = {
-  _id: Types.ObjectId;
+type Species = Partial<Document> & {
   species_name: string;
-  category: Types.ObjectId;
+  category: mongoose.Types.ObjectId;
   image: string;
   location: Point;
 };
 
-type FullSpecies = Omit<Species, 'category'> & {
-  category: Category;
+type Animal = Partial<Document> & {
+  animal_name: string;
+  species: mongoose.Types.ObjectId;
+  birthdate: Date;
+  gender: 'male' | 'female';
+  owner: mongoose.Types.ObjectId;
 };
 
 type User = Partial<Document> & {
-  _id: Types.ObjectId | string;
   user_name: string;
   email: string;
-  role: 'user' | 'admin';
   password: string;
+  role: 'user' | 'admin';
 };
 
-type UserOutput = Omit<User, 'password' | 'role'>;
+type UserWithoutPassword = Omit<User, 'password'>;
 
-type UserInput = Omit<User, '_id' | 'role'>;
-
-type UserTest = Partial<User>;
-
-type LoginUser = Omit<User, 'password'>;
+type UserWithoutPasswordRole = Omit<UserWithoutPassword, 'role'>;
 
 export {
   Category,
-  Animal,
   Species,
-  FullSpecies,
-  FullAnimal,
+  Animal,
   User,
-  UserOutput,
-  UserInput,
-  UserTest,
-  LoginUser,
+  UserWithoutPassword,
+  UserWithoutPasswordRole,
 };

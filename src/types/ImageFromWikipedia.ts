@@ -4,21 +4,22 @@ type Thumbnail = {
   height: number;
 };
 
-type Original = {
-  source: string;
-  width: number;
-  height: number;
-};
-
 type Page = {
   pageid: number;
   ns: number;
   title: string;
   thumbnail: Thumbnail;
-  original: Original;
+  pageimage: string;
+};
+
+type Normalized = {
+  fromencoded: boolean;
+  from: string;
+  to: string;
 };
 
 type Query = {
+  normalized: Normalized[];
   pages: Page[];
 };
 
@@ -27,4 +28,4 @@ type ImageFromWikipedia = {
   query: Query;
 };
 
-export {ImageFromWikipedia};
+export {ImageFromWikipedia, Page, Thumbnail};

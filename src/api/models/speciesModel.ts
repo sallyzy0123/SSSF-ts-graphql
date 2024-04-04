@@ -1,21 +1,20 @@
-// TODO: Schema for species model
 import mongoose from 'mongoose';
 import {Species} from '../../types/DBTypes';
 
 const speciesSchema = new mongoose.Schema<Species>({
   species_name: {
     type: String,
-    required: true,
     unique: true,
+    minlength: [2, 'Minimum length is 2 characters.'],
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
-    required: true,
+    required: [true, 'Category is required.'],
   },
   image: {
     type: String,
-    required: true,
+    required: [true, 'Image is required.'],
   },
   location: {
     type: {
@@ -30,6 +29,6 @@ const speciesSchema = new mongoose.Schema<Species>({
   },
 });
 
-const SpeciesModel = mongoose.model<Species>('Species', speciesSchema);
+speciesSchema.index({location: '2dsphere'});
 
-export default SpeciesModel;
+export default mongoose.model<Species>('Species', speciesSchema);

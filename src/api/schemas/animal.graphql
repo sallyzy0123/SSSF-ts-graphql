@@ -1,0 +1,46 @@
+scalar DateTime
+
+type Animal {
+  id: ID
+  animal_name: String
+  species: Species
+  birthdate: DateTime
+  gender: Gender
+  owner: ID
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+type Query {
+  animals: [Animal]
+  animal(id: ID!): Animal
+}
+
+input AnimalInput {
+  animal_name: String!
+  species: ID!
+  birthdate: DateTime!
+  gender: Gender!
+  owner: ID!
+}
+
+input AnimalModifyInput {
+  animal_name: String
+  species: ID
+  birthdate: DateTime
+  gender: Gender
+  owner: ID
+}
+
+type AnimalMessage {
+  message: String!
+  animal: Animal
+}
+
+type Mutation {
+  addAnimal(animal: AnimalInput!): AnimalMessage
+  modifyAnimal(animal: AnimalModifyInput!, id: ID!): AnimalMessage
+  deleteAnimal(id: ID!): AnimalMessage
+}

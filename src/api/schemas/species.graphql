@@ -1,0 +1,55 @@
+type Species {
+  id: ID
+  species_name: String
+  category: Category
+  image: String
+  location: Point
+}
+
+type Point {
+  type: GeoJSONPointType
+  coordinates: [Float]
+}
+
+enum GeoJSONPointType {
+  Point
+}
+
+type Query {
+  species: [Species]
+  speciesByID(id: ID!): Species
+}
+
+input SpeciesInput {
+  species_name: String!
+  category: ID!
+  image: String!
+  location: PointInput!
+}
+
+input SpeciesModifyInput {
+  species_name: String
+  category: ID
+  image: String
+  location: PointInput
+}
+
+input PointInput {
+  type: GeoJSONPointType!
+  """
+  Coordinates must be in the format [longitude, latitude]
+  """
+  # Coordinates must be in the format [longitude, latitude]
+  coordinates: [Float]!
+}
+
+type SpeciesMessage {
+  message: String!
+  species: Species
+}
+
+type Mutation {
+  addSpecies(species: SpeciesInput!): SpeciesMessage
+  modifySpecies(species: SpeciesModifyInput!, id: ID!): SpeciesMessage
+  deleteSpecies(id: ID!): SpeciesMessage
+}

@@ -5,11 +5,9 @@ import {Category} from '../../types/DBTypes';
 const categorySchema = new mongoose.Schema<Category>({
   category_name: {
     type: String,
-    required: true,
     unique: true,
+    minlength: [2, 'Minimum length is 2 characters.'],
   },
 });
 
-const CategoryModel = mongoose.model<Category>('Category', categorySchema);
-
-export default CategoryModel;
+export default mongoose.model<Category>('Category', categorySchema);

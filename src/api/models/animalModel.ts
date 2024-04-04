@@ -5,26 +5,28 @@ import {Animal} from '../../types/DBTypes';
 const animalSchema = new mongoose.Schema<Animal>({
   animal_name: {
     type: String,
-    required: true,
-    unique: true,
+    minlength: [2, 'Minimum length is 2 characters.'],
   },
   species: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Species',
-    required: true,
+    required: [true, 'Species is required.'],
   },
   birthdate: {
     type: Date,
-    required: true,
-    max: Date.now(),
+    required: [true, 'Birthdate is required.'],
+    max: [Date.now(), 'Birthdate cannot be in the future.'],
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female'],
+    enum: ['male', 'female'],
     required: true,
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Owner is required.'],
   },
 });
 
-const AnimalModel = mongoose.model<Animal>('Animal', animalSchema);
-
-export default AnimalModel;
+export default mongoose.model<Animal>('Animal', animalSchema);
