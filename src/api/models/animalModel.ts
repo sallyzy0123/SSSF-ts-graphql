@@ -27,6 +27,22 @@ const animalSchema = new mongoose.Schema<Animal>({
     ref: 'User',
     required: [true, 'Owner is required.'],
   },
-});
+  image: {
+    type: String,
+    required: [true, 'Image is required.'],
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+  }
+);
 
 export default mongoose.model<Animal>('Animal', animalSchema);

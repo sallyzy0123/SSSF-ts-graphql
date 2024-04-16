@@ -1,5 +1,8 @@
+import {GraphQLError} from 'graphql';
 import {Animal, Species} from '../../types/DBTypes';
 import speciesModel from '../models/speciesModel';
+import {MyContext} from '../../types/MyContext';
+import animalModel from '../models/animalModel';
 
 export default {
   Animal: {
@@ -21,7 +24,12 @@ export default {
     ): Promise<Species> => {
       const species = await speciesModel.findById(args.id);
       if (!species) {
-        throw new Error('Species not found');
+        throw new GraphQLError('Animal not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+            http: {status: 404},
+          },
+        });
       }
       return species;
     },
@@ -31,17 +39,32 @@ export default {
       _parent: undefined,
       args: {species: Omit<Species, '_id'>},
     ): Promise<{message: string; species?: Species}> => {
-      const species = await speciesModel.create(args.species);
-      if (species) {
+      try {
+        const species = await speciesModel.create(args.species);
+        if (!species) {
+          return {message: 'Species not added'};
+        }
         return {message: 'Species added', species};
-      } else {
-        return {message: 'Species not added'};
+      } catch (error) {
+        throw new GraphQLError((error as Error).message, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        });
       }
     },
     modifySpecies: async (
       _parent: undefined,
       args: {species: Omit<Species, '_id'>; id: string},
+      context: MyContext,
     ): Promise<{message: string; species?: Species}> => {
+      if (!context.userdata || context.userdata.role !== 'admin') {
+        throw new GraphQLError('User not authorized', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
       const species = await speciesModel.findByIdAndUpdate(
         args.id,
         args.species,
@@ -56,7 +79,20 @@ export default {
     deleteSpecies: async (
       _parent: undefined,
       args: {id: string},
+      context: MyContext,
     ): Promise<{message: string; species?: Species}> => {
+      if (!context.userdata || context.userdata.role !== 'admin') {
+        throw new GraphQLError('User not authorized', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+
+      // delete animals that belong to this species
+      await animalModel.deleteMany({species: args.id});
+
+
       const species = await speciesModel.findByIdAndDelete(args.id);
       if (species) {
         return {message: 'Species deleted', species};

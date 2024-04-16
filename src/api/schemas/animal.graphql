@@ -7,12 +7,15 @@ type Animal {
   birthdate: DateTime
   gender: Gender
   owner: ID
+  image: String
+  location: Point
 }
 
 enum Gender {
-  MALE
-  FEMALE
+  male
+  female
 }
+
 type Query {
   animals: [Animal]
   animal(id: ID!): Animal
@@ -23,7 +26,8 @@ input AnimalInput {
   species: ID!
   birthdate: DateTime!
   gender: Gender!
-  owner: ID!
+  image: String!
+  location: PointInput!
 }
 
 input AnimalModifyInput {
@@ -32,6 +36,8 @@ input AnimalModifyInput {
   birthdate: DateTime
   gender: Gender
   owner: ID
+  image: String
+  location: PointInput
 }
 
 type AnimalMessage {

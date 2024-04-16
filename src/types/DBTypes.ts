@@ -19,6 +19,8 @@ type Animal = Partial<Document> & {
   birthdate: Date;
   gender: 'male' | 'female';
   owner: mongoose.Types.ObjectId;
+  image: string;
+  location: Point;
 };
 
 type User = Partial<Document> & {
